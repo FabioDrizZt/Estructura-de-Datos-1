@@ -1,58 +1,52 @@
 #include "CuentaBancaria.hpp"
 
-CuentaBancaria::CuentaBancaria(const std::string& titular, const std::string& numeroCuenta)
-    : titular_(titular), numeroCuenta_(numeroCuenta), saldo_(0.0), activa_(true) {}
-
-CuentaBancaria CuentaBancaria::crearCuenta(const std::string& titular, const std::string& numeroCuenta) {
-    return CuentaBancaria(titular, numeroCuenta);
+CuentaBancaria crearCuenta(const std::string& titular, const std::string& numeroCuenta) {
+    CuentaBancaria cuenta;
+    cuenta.titular = titular;
+    cuenta.numeroCuenta = numeroCuenta;
+    cuenta.saldo = 0.0;
+    cuenta.activa = true;
+    return cuenta;
 }
 
-bool CuentaBancaria::depositar(double monto) {
-    if (!activa_ || monto <= 0.0) {
+bool depositar(CuentaBancaria& cuenta, double monto) {
+    if (!cuenta.activa || monto <= 0.0) {
         return false;
     }
-    saldo_ += monto;
+    cuenta.saldo += monto;
     return true;
 }
 
-bool CuentaBancaria::extraer(double monto) {
-    if (!activa_ || monto <= 0.0 || monto > saldo_) {
+bool extraer(CuentaBancaria& cuenta, double monto) {
+    if (!cuenta.activa || monto <= 0.0 || monto > cuenta.saldo) {
         return false;
     }
-    saldo_ -= monto;
+    cuenta.saldo -= monto;
     return true;
 }
 
-bool CuentaBancaria::transferir(CuentaBancaria& destino, double monto) {
-    if (&destino == this) {
+bool transferir(CuentaBancaria& origen, CuentaBancaria& destino, double monto) {
+    if (&origen == &destino) {
         return false;
     }
 
-    if (!activa_ || !destino.activa_ || monto <= 0.0 || monto > saldo_) {
+    if (!origen.activa || !destino.activa || monto <= 0.0 || monto > origen.saldo) {
         return false;
     }
 
-    saldo_ -= monto;
-    destino.saldo_ += monto;
+    origen.saldo -= monto;
+    destino.saldo += monto;
     return true;
 }
 
-double CuentaBancaria::obtenerSaldo() const {
-    return saldo_;
+double obtenerSaldo(const CuentaBancaria& cuenta) {
+    return cuenta.saldo;
 }
 
-bool CuentaBancaria::estaActiva() const {
-    return activa_;
+bool estaActiva(const CuentaBancaria& cuenta) {
+    return cuenta.activa;
 }
 
-void CuentaBancaria::cerrarCuenta() {
-    activa_ = false;
-}
-
-const std::string& CuentaBancaria::obtenerTitular() const {
-    return titular_;
-}
-
-const std::string& CuentaBancaria::obtenerNumeroCuenta() const {
-    return numeroCuenta_;
+void cerrarCuenta(CuentaBancaria& cuenta) {
+    cuenta.activa = false;
 }
